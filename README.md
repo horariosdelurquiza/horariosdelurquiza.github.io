@@ -1,0 +1,25 @@
+# Tren Urquiza horarios
+
+Página para ver cuándo pasa el próximo tren de la línea Urquiza (Federico Lacroze ↔ General Lemos), cuánto tarda y por dónde va según el horario.
+
+**Abrir:** https://horariosdelurquiza.github.io/
+
+Para abrir directo en un viaje, agregá al final del link `#origen-destino`, por ejemplo `#coronado-lacroze`.
+
+Nombres de estación para el link: lacroze, artigas, arata, beiro, libertador, devoto, lynch, fmoreno, lourdes, tropezon, bosch, coronado, podesta, newbery, dario, eandes, delasalle, barrufaldi, lozano, agneta, campodemayo, cabral, lemos.
+
+## Anuncios
+
+- Para ver dónde van los anuncios: abrí la página con `?anuncios` al final (por ejemplo `https://horariosdelurquiza.github.io/?anuncios`).
+- Cuando Google AdSense apruebe el sitio, completá `ADS_CLIENT` y `ADS_SLOTS` en `index.html` (buscá «ANUNCIOS»).
+- Cuando AdSense dé el ID de editor, agregar el archivo `ads.txt` en la raíz de este repositorio.
+
+## Contador de visitas
+
+- Usa Cloudflare Web Analytics (gratis, sin cookies).
+- Crear una cuenta en Cloudflare, ir a Web Analytics, agregar el sitio y copiar el token.
+- Pegarlo en `CF_ANALYTICS_TOKEN` dentro de `index.html` (buscá «CONTADOR DE VISITAS»).
+
+## Datos
+
+Horarios del cuadro oficial «Invierno 2026» de Metrovías, vigente desde el 2 de marzo de 2026. Página no oficial: pueden variar ±3 minutos.
