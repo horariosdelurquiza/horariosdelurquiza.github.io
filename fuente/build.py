@@ -92,26 +92,29 @@ info.append(f'      <p>Los horarios son los del cuadro oficial «Invierno 2026»
 info.append('    </div>')
 
 info.append('    <div class="block">')
-info.append('      <h2>Primer y último tren</h2>')
+info.append('      <details class="plegable"><summary><h2>Primer y último tren</h2></summary>')
 info.append('      <div class="tblwrap"><table><thead><tr><th>Día</th><th>Desde Lacroze</th><th>Desde Lemos</th></tr></thead><tbody>')
 for k,(d,l) in enumerate(DAYS):
     info.append(f'        <tr><td>{E(l)}</td><td class="tab">{first_last[0][1][k]}</td><td class="tab">{first_last[1][1][k]}</td></tr>')
 info.append('      </tbody></table></div>')
-info.append('      <h2 style="margin-top:22px">Cada cuánto pasa</h2>')
+info.append('      </details>')
+info.append('      <details class="plegable"><summary><h2>Cada cuánto pasa</h2></summary>')
 info.append('      <p class="small">Minutos entre un tren y el siguiente, según las salidas desde Federico Lacroze.</p>')
 info.append('      <div class="tblwrap"><table><thead><tr><th>Horario</th>' + ''.join(f'<th>{E(DAYS_SHORT[d])}</th>' for d,_ in DAYS) + '</tr></thead><tbody>')
 for name, row in freq:
     info.append(f'        <tr><td>{E(name)}</td>' + ''.join(f'<td>{E(c)}</td>' for c in row) + '</tr>')
 info.append('      </tbody></table></div>')
+info.append('      </details>')
 info.append('    </div>')
 
 info.append('    <div class="block">')
-info.append('      <h2>Cuánto tarda hasta cada estación</h2>')
+info.append('      <details class="plegable"><summary><h2>Cuánto tarda hasta cada estación</h2></summary>')
 info.append('      <p class="small">Minutos de viaje un día hábil. Tocá una estación para ver sus próximos trenes.</p>')
 info.append('      <div class="tblwrap"><table><thead><tr><th>Estación</th><th class="num">Desde Lacroze</th><th class="num">Desde Lemos</th></tr></thead><tbody>')
 for i, name, slug, fl, fm in travel:
     info.append(f'        <tr><td><a href="{link_for(i, slug)}">{E(name)}</a></td><td class="num">{fl} min</td><td class="num">{fm} min</td></tr>')
 info.append('      </tbody></table></div>')
+info.append('      </details>')
 info.append('    </div>')
 
 faq = [
@@ -124,9 +127,10 @@ faq = [
 info.append('    <div class="block wide">')
 info.append('      <h2>Preguntas frecuentes</h2>')
 for q, a in faq:
-    info.append(f'      <h3>{E(q)}</h3><p>{E(a)}</p>')
-info.append('      <h3>Estaciones del Tren Urquiza</h3>')
+    info.append(f'      <details class="plegable"><summary><h3>{E(q)}</h3></summary><p>{E(a)}</p></details>')
+info.append('      <details class="plegable"><summary><h3>Estaciones del Tren Urquiza</h3></summary>')
 info.append('      <ol class="stlist">' + ''.join(f'<li><a href="{link_for(i, s)}">{E(n)}</a></li>' for i,(n,s) in enumerate(ST)) + '</ol>')
+info.append('      </details>')
 info.append('    </div>')
 info.append('  </section>')
 INFO = '\n'.join(info)

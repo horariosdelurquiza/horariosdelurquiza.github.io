@@ -260,6 +260,24 @@ td.tab,td.num{white-space:nowrap;font-feature-settings:"tnum" 1}
 .pasos b{font-weight:700}
 .instalar-nota{margin:0 18px 18px;font-size:14px;color:var(--riel)}
 
+/* aviso para crear el ícono, debajo del tablero (solo celulares) */
+.icono{display:grid;gap:12px}
+.icono .small{margin:2px 0 0}
+.icono .acciones{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
+
+/* bloques de información que se abren y se cierran con un toque */
+.plegable{border-top:1px solid var(--junta)}
+.plegable:last-of-type{border-bottom:1px solid var(--junta)}
+.plegable summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;cursor:pointer;list-style:none}
+.plegable summary::-webkit-details-marker{display:none}
+.plegable summary::after{content:"";flex:none;width:9px;height:9px;border-right:2.5px solid var(--carbon);border-bottom:2.5px solid var(--carbon);transform:rotate(45deg);margin:-4px 4px 0 0;transition:transform .15s}
+.plegable[open] summary::after{transform:rotate(-135deg);margin-top:4px}
+.plegable summary h2,.plegable summary h3{margin:0}
+.info .plegable summary h2{font-size:20px}
+.info .plegable summary h3{font-size:17px}
+.plegable > :not(summary){margin-bottom:16px}
+@media (prefers-reduced-motion: reduce){.plegable summary::after{transition:none}}
+
 /* hoja de estaciones */
 dialog.sheet{border:0;padding:0;margin:auto auto 0;width:100%;max-width:520px;max-height:88vh;border-radius:20px 20px 0 0;background:var(--papel);color:var(--carbon);box-shadow:0 -12px 40px rgba(34,41,43,.28)}
 @media (min-width:640px){dialog.sheet{margin:auto;border-radius:20px;max-height:80vh}}
@@ -348,6 +366,17 @@ dialog.sheet::backdrop{background:rgba(34,41,43,.5)}
       <div class="nota">El horario oficial puede variar ±3 minutos.</div>
     </section>
 
+    <section class="panel icono" id="iconoAviso" aria-label="Crear ícono en el celular" hidden>
+      <div>
+        <h2 class="sec-h sm">Abrila con un toque</h2>
+        <p class="small">Creá el ícono en tu celular y entrás directo al próximo tren, aunque no tengas señal.</p>
+      </div>
+      <div class="acciones">
+        <button class="btn btn-main" id="iconoBtn" type="button">Crear ícono</button>
+        <button class="linkbtn" id="iconoNo" type="button">Ahora no</button>
+      </div>
+    </section>
+
     <section class="panel avisos" aria-label="Avisos de Metrovías">
       <div class="avisos-h">
         <div>
@@ -405,13 +434,14 @@ dialog.sheet::backdrop{background:rgba(34,41,43,.5)}
       <p>Los horarios son los del cuadro oficial «Invierno 2026» publicado por Metrovías, vigente desde el 2 de marzo de 2026: 185 trenes por día hábil, 128 los sábados y 77 los domingos y feriados, sumando los dos sentidos.</p>
     </div>
     <div class="block">
-      <h2>Primer y último tren</h2>
+      <details class="plegable"><summary><h2>Primer y último tren</h2></summary>
       <div class="tblwrap"><table><thead><tr><th>Día</th><th>Desde Lacroze</th><th>Desde Lemos</th></tr></thead><tbody>
         <tr><td>Hábiles</td><td class="tab">01:00 – 23:50</td><td class="tab">01:00 – 23:59</td></tr>
         <tr><td>Sábados</td><td class="tab">01:00 – 23:50</td><td class="tab">01:00 – 23:48</td></tr>
         <tr><td>Domingos y feriados</td><td class="tab">01:00 – 23:50</td><td class="tab">00:01 – 23:35</td></tr>
       </tbody></table></div>
-      <h2 style="margin-top:22px">Cada cuánto pasa</h2>
+      </details>
+      <details class="plegable"><summary><h2>Cada cuánto pasa</h2></summary>
       <p class="small">Minutos entre un tren y el siguiente, según las salidas desde Federico Lacroze.</p>
       <div class="tblwrap"><table><thead><tr><th>Horario</th><th>Hábiles</th><th>Sábados</th><th>Dom. y feriados</th></tr></thead><tbody>
         <tr><td>Madrugada (salen a las)</td><td>01:00, 02:40, 03:35, 04:20, 04:35</td><td>01:00, 02:40, 03:35, 04:40</td><td>01:00, 04:25</td></tr>
@@ -420,9 +450,10 @@ dialog.sheet::backdrop{background:rgba(34,41,43,.5)}
         <tr><td>Tarde (17 a 20)</td><td>10 min</td><td>20 min</td><td>30 min</td></tr>
         <tr><td>Noche (20 a 24)</td><td>15 a 20 min</td><td>25 a 30 min</td><td>30 a 48 min</td></tr>
       </tbody></table></div>
+      </details>
     </div>
     <div class="block">
-      <h2>Cuánto tarda hasta cada estación</h2>
+      <details class="plegable"><summary><h2>Cuánto tarda hasta cada estación</h2></summary>
       <p class="small">Minutos de viaje un día hábil. Tocá una estación para ver sus próximos trenes.</p>
       <div class="tblwrap"><table><thead><tr><th>Estación</th><th class="num">Desde Lacroze</th><th class="num">Desde Lemos</th></tr></thead><tbody>
         <tr><td><a href="#lacroze-lemos">Federico Lacroze</a></td><td class="num">0 min</td><td class="num">50 min</td></tr>
@@ -449,16 +480,18 @@ dialog.sheet::backdrop{background:rgba(34,41,43,.5)}
         <tr><td><a href="#cabral-lacroze">Sargento Cabral</a></td><td class="num">44 min</td><td class="num">2 min</td></tr>
         <tr><td><a href="#lemos-lacroze">General Lemos</a></td><td class="num">47 min</td><td class="num">0 min</td></tr>
       </tbody></table></div>
+      </details>
     </div>
     <div class="block wide">
       <h2>Preguntas frecuentes</h2>
-      <h3>¿Cuánto tarda el tren de Lacroze a Lemos?</h3><p>Entre 47 y 51 minutos de punta a punta, según el tren.</p>
-      <h3>¿Hasta qué hora hay trenes?</h3><p>El último sale de Federico Lacroze a las 23:50 todos los días. De General Lemos sale a las 23:59 los días hábiles, a las 23:48 los sábados y a las 23:35 los domingos y feriados.</p>
-      <h3>¿Hay trenes los feriados?</h3><p>Sí, con el horario de domingos y feriados. La página detecta sola los feriados nacionales. El tren de las 00:01 que sale de General Lemos no corre los feriados.</p>
-      <h3>¿Los horarios son exactos?</h3><p>Metrovías aclara que pueden variar ±3 minutos, así que conviene llegar un rato antes. Si hay demoras o el servicio está cortado, lo avisan en su cuenta de X.</p>
-      <h3>¿Dónde está el tren ahora?</h3><p>En «Recorrido» ves por qué estación debería ir cada tren según el horario. No es un GPS: si hay demoras, el tren real puede estar más atrás.</p>
-      <h3>Estaciones del Tren Urquiza</h3>
+      <details class="plegable"><summary><h3>¿Cuánto tarda el tren de Lacroze a Lemos?</h3></summary><p>Entre 47 y 51 minutos de punta a punta, según el tren.</p></details>
+      <details class="plegable"><summary><h3>¿Hasta qué hora hay trenes?</h3></summary><p>El último sale de Federico Lacroze a las 23:50 todos los días. De General Lemos sale a las 23:59 los días hábiles, a las 23:48 los sábados y a las 23:35 los domingos y feriados.</p></details>
+      <details class="plegable"><summary><h3>¿Hay trenes los feriados?</h3></summary><p>Sí, con el horario de domingos y feriados. La página detecta sola los feriados nacionales. El tren de las 00:01 que sale de General Lemos no corre los feriados.</p></details>
+      <details class="plegable"><summary><h3>¿Los horarios son exactos?</h3></summary><p>Metrovías aclara que pueden variar ±3 minutos, así que conviene llegar un rato antes. Si hay demoras o el servicio está cortado, lo avisan en su cuenta de X.</p></details>
+      <details class="plegable"><summary><h3>¿Dónde está el tren ahora?</h3></summary><p>En «Recorrido» ves por qué estación debería ir cada tren según el horario. No es un GPS: si hay demoras, el tren real puede estar más atrás.</p></details>
+      <details class="plegable"><summary><h3>Estaciones del Tren Urquiza</h3></summary>
       <ol class="stlist"><li><a href="#lacroze-lemos">Federico Lacroze</a></li><li><a href="#artigas-lacroze">José Artigas</a></li><li><a href="#arata-lacroze">Pedro N. Arata</a></li><li><a href="#beiro-lacroze">Dr. Francisco Beiró</a></li><li><a href="#libertador-lacroze">El Libertador</a></li><li><a href="#devoto-lacroze">Antonio Devoto</a></li><li><a href="#lynch-lacroze">Coronel Francisco Lynch</a></li><li><a href="#fmoreno-lacroze">Fernández Moreno</a></li><li><a href="#lourdes-lacroze">Lourdes</a></li><li><a href="#tropezon-lacroze">Tropezón</a></li><li><a href="#bosch-lacroze">José María Bosch</a></li><li><a href="#coronado-lacroze">Martín Coronado</a></li><li><a href="#podesta-lacroze">Pablo Podestá</a></li><li><a href="#newbery-lacroze">Jorge Newbery</a></li><li><a href="#dario-lacroze">Rubén Darío</a></li><li><a href="#eandes-lacroze">Ejército de los Andes</a></li><li><a href="#delasalle-lacroze">Juan B. de La Salle</a></li><li><a href="#barrufaldi-lacroze">Sargento Barrufaldi</a></li><li><a href="#lozano-lacroze">Capitán Lozano</a></li><li><a href="#agneta-lacroze">Teniente Agneta</a></li><li><a href="#campodemayo-lacroze">Campo de Mayo</a></li><li><a href="#cabral-lacroze">Sargento Cabral</a></li><li><a href="#lemos-lacroze">General Lemos</a></li></ol>
+      </details>
     </div>
   </section>
 
@@ -1025,7 +1058,7 @@ var installEvt = null;
 window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); installEvt = e; });
 window.addEventListener('appinstalled', function(){ installEvt = null; toast('Listo, ya tenés el ícono en el celular.'); });
 function isStandalone(){ try { return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch(e){ return false; } }
-$('installBtn').addEventListener('click', function(){
+function crearIcono(){
   if (isStandalone()){ toast('Ya la estás usando desde el ícono.'); return; }
   if (installEvt){
     installEvt.prompt();
@@ -1045,9 +1078,26 @@ $('installBtn').addEventListener('click', function(){
   $('installSteps').innerHTML = steps.map(function(t){ return '<li>' + t + '</li>'; }).join('');
   var dlg = $('installSheet');
   try { dlg.showModal(); } catch(e){ dlg.setAttribute('open', ''); }
-});
+}
+$('installBtn').addEventListener('click', crearIcono);
 $('installClose').addEventListener('click', function(){ var dlg = $('installSheet'); try { dlg.close(); } catch(e){ dlg.removeAttribute('open'); } });
 $('installSheet').addEventListener('click', function(e){ if (e.target === this){ try { this.close(); } catch(err){} } });
+
+/* aviso chico debajo del tablero: solo en celulares, y se puede cerrar para siempre */
+(function(){
+  var aviso = $('iconoAviso');
+  var ua = navigator.userAgent || '';
+  var celular = /Android|iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && 'ontouchend' in document);
+  if (celular && !isStandalone() && store.get('urq.icono', 0) !== 1) aviso.hidden = false;
+  $('iconoBtn').addEventListener('click', crearIcono);
+  $('iconoNo').addEventListener('click', function(){ store.set('urq.icono', 1); aviso.hidden = true; });
+  window.addEventListener('appinstalled', function(){ aviso.hidden = true; });
+})();
+
+/* en pantallas grandes, los bloques de información empiezan abiertos */
+if (window.matchMedia && window.matchMedia('(min-width:760px)').matches){
+  Array.prototype.forEach.call(document.querySelectorAll('details.plegable'), function(d){ d.open = true; });
+}
 
 /* ---------- anuncios ---------- */
 function setupAds(){

@@ -260,6 +260,24 @@ td.tab,td.num{white-space:nowrap;font-feature-settings:"tnum" 1}
 .pasos b{font-weight:700}
 .instalar-nota{margin:0 18px 18px;font-size:14px;color:var(--riel)}
 
+/* aviso para crear el ícono, debajo del tablero (solo celulares) */
+.icono{display:grid;gap:12px}
+.icono .small{margin:2px 0 0}
+.icono .acciones{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
+
+/* bloques de información que se abren y se cierran con un toque */
+.plegable{border-top:1px solid var(--junta)}
+.plegable:last-of-type{border-bottom:1px solid var(--junta)}
+.plegable summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;cursor:pointer;list-style:none}
+.plegable summary::-webkit-details-marker{display:none}
+.plegable summary::after{content:"";flex:none;width:9px;height:9px;border-right:2.5px solid var(--carbon);border-bottom:2.5px solid var(--carbon);transform:rotate(45deg);margin:-4px 4px 0 0;transition:transform .15s}
+.plegable[open] summary::after{transform:rotate(-135deg);margin-top:4px}
+.plegable summary h2,.plegable summary h3{margin:0}
+.info .plegable summary h2{font-size:20px}
+.info .plegable summary h3{font-size:17px}
+.plegable > :not(summary){margin-bottom:16px}
+@media (prefers-reduced-motion: reduce){.plegable summary::after{transition:none}}
+
 /* hoja de estaciones */
 dialog.sheet{border:0;padding:0;margin:auto auto 0;width:100%;max-width:520px;max-height:88vh;border-radius:20px 20px 0 0;background:var(--papel);color:var(--carbon);box-shadow:0 -12px 40px rgba(34,41,43,.28)}
 @media (min-width:640px){dialog.sheet{margin:auto;border-radius:20px;max-height:80vh}}
@@ -346,6 +364,17 @@ dialog.sheet::backdrop{background:rgba(34,41,43,.5)}
       <div class="despues" id="bAfter"></div>
       <div class="recent" id="bRecent" hidden></div>
       <div class="nota">El horario oficial puede variar ±3 minutos.</div>
+    </section>
+
+    <section class="panel icono" id="iconoAviso" aria-label="Crear ícono en el celular" hidden>
+      <div>
+        <h2 class="sec-h sm">Abrila con un toque</h2>
+        <p class="small">Creá el ícono en tu celular y entrás directo al próximo tren, aunque no tengas señal.</p>
+      </div>
+      <div class="acciones">
+        <button class="btn btn-main" id="iconoBtn" type="button">Crear ícono</button>
+        <button class="linkbtn" id="iconoNo" type="button">Ahora no</button>
+      </div>
     </section>
 
     <section class="panel avisos" aria-label="Avisos de Metrovías">
@@ -963,7 +992,7 @@ var installEvt = null;
 window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); installEvt = e; });
 window.addEventListener('appinstalled', function(){ installEvt = null; toast('Listo, ya tenés el ícono en el celular.'); });
 function isStandalone(){ try { return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch(e){ return false; } }
-$('installBtn').addEventListener('click', function(){
+function crearIcono(){
   if (isStandalone()){ toast('Ya la estás usando desde el ícono.'); return; }
   if (installEvt){
     installEvt.prompt();
@@ -983,9 +1012,26 @@ $('installBtn').addEventListener('click', function(){
   $('installSteps').innerHTML = steps.map(function(t){ return '<li>' + t + '</li>'; }).join('');
   var dlg = $('installSheet');
   try { dlg.showModal(); } catch(e){ dlg.setAttribute('open', ''); }
-});
+}
+$('installBtn').addEventListener('click', crearIcono);
 $('installClose').addEventListener('click', function(){ var dlg = $('installSheet'); try { dlg.close(); } catch(e){ dlg.removeAttribute('open'); } });
 $('installSheet').addEventListener('click', function(e){ if (e.target === this){ try { this.close(); } catch(err){} } });
+
+/* aviso chico debajo del tablero: solo en celulares, y se puede cerrar para siempre */
+(function(){
+  var aviso = $('iconoAviso');
+  var ua = navigator.userAgent || '';
+  var celular = /Android|iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && 'ontouchend' in document);
+  if (celular && !isStandalone() && store.get('urq.icono', 0) !== 1) aviso.hidden = false;
+  $('iconoBtn').addEventListener('click', crearIcono);
+  $('iconoNo').addEventListener('click', function(){ store.set('urq.icono', 1); aviso.hidden = true; });
+  window.addEventListener('appinstalled', function(){ aviso.hidden = true; });
+})();
+
+/* en pantallas grandes, los bloques de información empiezan abiertos */
+if (window.matchMedia && window.matchMedia('(min-width:760px)').matches){
+  Array.prototype.forEach.call(document.querySelectorAll('details.plegable'), function(d){ d.open = true; });
+}
 
 /* ---------- anuncios ---------- */
 function setupAds(){

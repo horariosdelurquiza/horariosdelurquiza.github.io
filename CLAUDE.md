@@ -111,10 +111,11 @@ El dueño pidió que la página **no parezca hecha con IA** y que use el color d
 - Datos de combinaciones por estación y link al mapa.
 - Avisos de Metrovías: muestra los últimos posts de @Metrovias en X.
 - Compartir: botón del sistema y botón de WhatsApp.
-- Instalar como app (ícono en el celular), con instrucciones para iPhone.
+- Instalar como app (ícono en el celular), con instrucciones para iPhone. Además del botón del pie, hay un aviso chico debajo del tablero, solo en celulares, que se puede cerrar con "Ahora no".
+- Abajo, la información para buscadores (tablas y preguntas frecuentes) está en bloques que se abren y se cierran con un toque. En pantallas grandes empiezan abiertos.
 - Funciona sin conexión.
 
-Claves que guarda en `localStorage`: `urq.recent`, `urq.last`, `urq.avisos`, `urq.alarm`, `urq.lead`.
+Claves que guarda en `localStorage`: `urq.recent`, `urq.last`, `urq.avisos`, `urq.alarm`, `urq.lead`, `urq.icono` (el aviso del ícono ya se cerró).
 
 ## Pendientes
 
