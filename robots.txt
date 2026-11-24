@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /fuente/
+Disallow: /CLAUDE.md
+
+Sitemap: https://horariosdelurquiza.github.io/sitemap.xml

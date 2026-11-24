@@ -1,6 +1,6 @@
 /* Tren Urquiza horarios: guarda la página para usarla sin señal. */
-var CACHE = 'urquiza-0349dd58cd';
-var CORE = ['./', './index.html', './privacidad.html', './manifest.webmanifest', './favicon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
+var CACHE = 'urquiza-a810a2ac6c';
+var CORE = ['./', './index.html', './privacidad.html', './terminos.html', './manifest.webmanifest', './favicon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', function(e){
   e.waitUntil(caches.open(CACHE).then(function(c){ return c.addAll(CORE); }).then(function(){ return self.skipWaiting(); }));
@@ -12,6 +12,12 @@ self.addEventListener('activate', function(e){
   }).then(function(){ return self.clients.claim(); }));
 });
 
+function pageKey(url){
+  if (url.pathname.endsWith('privacidad.html')) return './privacidad.html';
+  if (url.pathname.endsWith('terminos.html')) return './terminos.html';
+  return './index.html';
+}
+
 self.addEventListener('fetch', function(e){
   var req = e.request;
   if (req.method !== 'GET') return;
@@ -20,10 +26,10 @@ self.addEventListener('fetch', function(e){
   if (req.mode === 'navigate'){
     e.respondWith(fetch(req).then(function(res){
       var copy = res.clone();
-      caches.open(CACHE).then(function(c){ c.put(url.pathname.endsWith('privacidad.html') ? './privacidad.html' : './index.html', copy); });
+      caches.open(CACHE).then(function(c){ c.put(pageKey(url), copy); });
       return res;
     }).catch(function(){
-      return caches.match(url.pathname.endsWith('privacidad.html') ? './privacidad.html' : './index.html');
+      return caches.match(pageKey(url));
     }));
     return;
   }

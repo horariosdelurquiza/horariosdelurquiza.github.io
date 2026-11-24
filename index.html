@@ -244,13 +244,21 @@ tbody tr:nth-child(even) td{background:var(--turquesa-tinta)}
 td.num,th.num{text-align:right}
 td.tab,td.num{white-space:nowrap;font-feature-settings:"tnum" 1}
 .tblwrap{overflow-x:auto;max-width:100%;border-radius:8px}
-.stlist{columns:2;column-gap:20px;padding-left:22px;margin:6px 0}
+.stlist{columns:2;column-gap:44px;padding-left:26px;margin:6px 0}
 @media (min-width:760px){.stlist{columns:3}}
 .stlist li{padding:2px 0;break-inside:avoid}
 
-.foot{font-size:14px;color:var(--riel);display:grid;gap:6px}
+.foot{font-size:14px;color:var(--riel);display:grid;gap:14px;padding-top:18px;border-top:1px solid var(--junta)}
 .foot nav{display:flex;flex-wrap:wrap;gap:6px 18px}
 .foot a{color:var(--carbon)}
+.foot .marca{font-size:15px;font-weight:700;color:var(--carbon)}
+.foot .acciones-pie{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.foot .acciones-pie a,.foot .acciones-pie button{display:inline-flex;align-items:center;gap:10px;border:0;background:none;padding:6px 0;font-size:16px;font-weight:600;color:var(--turquesa-texto);text-decoration:none}
+.foot .acciones-pie a:hover,.foot .acciones-pie button:hover{text-decoration:underline;text-underline-offset:3px}
+.foot .acciones-pie svg{width:21px;height:21px;flex:none}
+.pasos{margin:0;padding:0 18px 18px 38px;display:grid;gap:10px;font-size:16px}
+.pasos b{font-weight:700}
+.instalar-nota{margin:0 18px 18px;font-size:14px;color:var(--riel)}
 
 /* hoja de estaciones */
 dialog.sheet{border:0;padding:0;margin:auto auto 0;width:100%;max-width:520px;max-height:88vh;border-radius:20px 20px 0 0;background:var(--papel);color:var(--carbon);box-shadow:0 -12px 40px rgba(34,41,43,.28)}
@@ -457,7 +465,15 @@ dialog.sheet::backdrop{background:rgba(34,41,43,.5)}
   <aside class="ad ad-final" data-slot="final" hidden></aside>
 
   <footer class="foot">
+    <p class="marca">horariosdelurquiza.github.io, 2026</p>
+    <ul class="acciones-pie">
+      
+      <li><button type="button" id="installBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 8v6M9 11h6"/><path d="M11 18.5h2"/></svg>
+        Crear ícono en el celular</button></li>
+    </ul>
     <nav>
+      <a href="terminos.html">Términos y condiciones</a>
       <a href="privacidad.html">Política de privacidad</a>
       <a href="https://metrovias.com.ar/index.php/horarios-del-servicio-linea-urquiza/">Horarios oficiales de Metrovías</a>
       <a href="https://x.com/Metrovias">Estado del servicio en vivo</a>
@@ -466,6 +482,13 @@ dialog.sheet::backdrop{background:rgba(34,41,43,.5)}
   </footer>
 </main>
 
+<dialog class="sheet" id="installSheet" aria-labelledby="installTitle">
+  <div class="sheet-in">
+    <div class="sheet-head"><h3 id="installTitle">Crear ícono en el celular</h3><button class="close" id="installClose" type="button" aria-label="Cerrar">×</button></div>
+    <p class="instalar-nota" id="installIntro">Así la abrís con un toque, como una app, y anda aunque no tengas señal.</p>
+    <ol class="pasos" id="installSteps"></ol>
+  </div>
+</dialog>
 <dialog class="sheet" id="sheet" aria-labelledby="sheetTitle">
   <div class="sheet-in">
     <div class="sheet-head"><h3 id="sheetTitle">Elegí la estación</h3><button class="close" id="sheetClose" type="button" aria-label="Cerrar">×</button></div>
@@ -996,6 +1019,35 @@ function setAvisos(open){
 }
 $('avisosBtn').addEventListener('click', function(){ setAvisos($('avisosBox').hidden); });
 if (store.get('urq.avisos', 0) === 1) setAvisos(true);
+
+/* ---------- crear ícono en el celular ---------- */
+var installEvt = null;
+window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); installEvt = e; });
+window.addEventListener('appinstalled', function(){ installEvt = null; toast('Listo, ya tenés el ícono en el celular.'); });
+function isStandalone(){ try { return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch(e){ return false; } }
+$('installBtn').addEventListener('click', function(){
+  if (isStandalone()){ toast('Ya la estás usando desde el ícono.'); return; }
+  if (installEvt){
+    installEvt.prompt();
+    installEvt.userChoice.then(function(){ installEvt = null; }, function(){});
+    return;
+  }
+  var ua = navigator.userAgent || '';
+  var ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && 'ontouchend' in document);
+  var steps;
+  if (ios){
+    steps = ['Abrí esta página en <b>Safari</b>.', 'Tocá el botón <b>Compartir</b>, el cuadrado con la flecha hacia arriba.', 'Elegí <b>Agregar a inicio</b> y tocá <b>Agregar</b>.'];
+  } else if (/Android/.test(ua)){
+    steps = ['Abrí esta página en <b>Chrome</b>.', 'Tocá el menú de los <b>tres puntos</b>, arriba a la derecha.', 'Elegí <b>Agregar a la pantalla principal</b> o <b>Instalar app</b> y confirmá.'];
+  } else {
+    steps = ['En el <b>iPhone</b>: en Safari, tocá <b>Compartir</b> y después <b>Agregar a inicio</b>.', 'En <b>Android</b>: en Chrome, tocá los <b>tres puntos</b> y después <b>Agregar a la pantalla principal</b>.', 'En la <b>computadora</b>: en Chrome, tocá el ícono de instalar al final de la barra de direcciones.'];
+  }
+  $('installSteps').innerHTML = steps.map(function(t){ return '<li>' + t + '</li>'; }).join('');
+  var dlg = $('installSheet');
+  try { dlg.showModal(); } catch(e){ dlg.setAttribute('open', ''); }
+});
+$('installClose').addEventListener('click', function(){ var dlg = $('installSheet'); try { dlg.close(); } catch(e){ dlg.removeAttribute('open'); } });
+$('installSheet').addEventListener('click', function(e){ if (e.target === this){ try { this.close(); } catch(err){} } });
 
 /* ---------- anuncios ---------- */
 function setupAds(){
