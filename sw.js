@@ -1,5 +1,5 @@
 /* Tren Urquiza horarios: guarda la página para usarla sin señal. */
-var CACHE = 'urquiza-0d3bbf0d46';
+var CACHE = 'urquiza-9522308d15';
 var CORE = ['./', './index.html', './privacidad.html', './terminos.html', './manifest.webmanifest', './favicon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', function(e){

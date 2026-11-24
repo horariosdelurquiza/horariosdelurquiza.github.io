@@ -111,7 +111,7 @@ El dueño pidió que la página **no parezca hecha con IA** y que use el color d
 - Datos de combinaciones por estación y link al mapa.
 - Avisos de Metrovías: muestra los últimos posts de @Metrovias en X.
 - Compartir: botón del sistema y botón de WhatsApp.
-- Instalar como app (ícono en el celular), con instrucciones para iPhone. Además del botón del pie, hay un aviso chico debajo del tablero, solo en celulares, que se puede cerrar con "Ahora no".
+- Instalar como app (ícono en el celular). Si el navegador no puede instalarla directo, abre una ventana con los pasos para iPhone y para Android, y pone primero los del celular que se está usando. Además del botón del pie, hay un aviso chico debajo del tablero, solo en celulares, que se puede cerrar con "Ahora no".
 - Abajo, la información para buscadores (tablas y preguntas frecuentes) está en bloques que se abren y se cierran con un toque. En pantallas grandes empiezan abiertos.
 - Funciona sin conexión.
 

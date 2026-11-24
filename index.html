@@ -258,6 +258,7 @@ td.tab,td.num{white-space:nowrap;font-feature-settings:"tnum" 1}
 .foot .acciones-pie svg{width:21px;height:21px;flex:none}
 .pasos{margin:0;padding:0 18px 18px 38px;display:grid;gap:10px;font-size:16px}
 .pasos b{font-weight:700}
+.paso-t{margin:0;padding:0 18px 8px;font-size:18px;font-weight:800;font-stretch:90%}
 .instalar-nota{margin:0 18px 18px;font-size:14px;color:var(--riel)}
 
 /* aviso para crear el ícono, debajo del tablero (solo celulares) */
@@ -519,7 +520,7 @@ dialog.sheet::backdrop{background:rgba(34,41,43,.5)}
   <div class="sheet-in">
     <div class="sheet-head"><h3 id="installTitle">Crear ícono en el celular</h3><button class="close" id="installClose" type="button" aria-label="Cerrar">×</button></div>
     <p class="instalar-nota" id="installIntro">Así la abrís con un toque, como una app, y anda aunque no tengas señal.</p>
-    <ol class="pasos" id="installSteps"></ol>
+    <div class="pasos-wrap" id="installSteps"></div>
   </div>
 </dialog>
 <dialog class="sheet" id="sheet" aria-labelledby="sheetTitle">
@@ -1067,15 +1068,15 @@ function crearIcono(){
   }
   var ua = navigator.userAgent || '';
   var ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && 'ontouchend' in document);
-  var steps;
-  if (ios){
-    steps = ['Abrí esta página en <b>Safari</b>.', 'Tocá el botón <b>Compartir</b>, el cuadrado con la flecha hacia arriba.', 'Elegí <b>Agregar a inicio</b> y tocá <b>Agregar</b>.'];
-  } else if (/Android/.test(ua)){
-    steps = ['Abrí esta página en <b>Chrome</b>.', 'Tocá el menú de los <b>tres puntos</b>, arriba a la derecha.', 'Elegí <b>Agregar a la pantalla principal</b> o <b>Instalar app</b> y confirmá.'];
-  } else {
-    steps = ['En el <b>iPhone</b>: en Safari, tocá <b>Compartir</b> y después <b>Agregar a inicio</b>.', 'En <b>Android</b>: en Chrome, tocá los <b>tres puntos</b> y después <b>Agregar a la pantalla principal</b>.', 'En la <b>computadora</b>: en Chrome, tocá el ícono de instalar al final de la barra de direcciones.'];
-  }
-  $('installSteps').innerHTML = steps.map(function(t){ return '<li>' + t + '</li>'; }).join('');
+  var android = /Android/.test(ua);
+  var iphone = { t: 'En iPhone', s: ['Abrí esta página en <b>Safari</b>.', 'Tocá el botón <b>Compartir</b>, el cuadrado con la flecha hacia arriba.', 'Elegí <b>Agregar a inicio</b> y tocá <b>Agregar</b>.'] };
+  var andr = { t: 'En Android', s: ['Abrí esta página en <b>Chrome</b>.', 'Tocá el menú de los <b>tres puntos</b>, arriba a la derecha.', 'Elegí <b>Agregar a la pantalla principal</b> o <b>Instalar app</b> y confirmá.'] };
+  var compu = { t: 'En la computadora', s: ['Abrí esta página en <b>Chrome</b>.', 'Tocá el ícono de <b>instalar</b> al final de la barra de direcciones.'] };
+  /* se muestran los dos sistemas; primero el del celular que se está usando */
+  var grupos = ios ? [iphone, andr] : android ? [andr, iphone] : [iphone, andr, compu];
+  $('installSteps').innerHTML = grupos.map(function(g){
+    return '<h4 class="paso-t">' + g.t + '</h4><ol class="pasos">' + g.s.map(function(t){ return '<li>' + t + '</li>'; }).join('') + '</ol>';
+  }).join('');
   var dlg = $('installSheet');
   try { dlg.showModal(); } catch(e){ dlg.setAttribute('open', ''); }
 }
