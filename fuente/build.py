@@ -145,7 +145,7 @@ if CONTACT_EMAIL:
     contacto = ('<li><a href="anunciar.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4h3l6 4V6L6 10H3z"/><path d="M16 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/></svg>Anunciá tu negocio</a></li>\n'
                 '      <li><a href="mailto:' + CONTACT_EMAIL + '?subject=Sugerencia%20para%20Tren%20Urquiza%20horarios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg>Dejanos tu sugerencia</a></li>')
 tpl = tpl.replace('<!--CONTACTO-->', contacto)
-page = tpl.replace('/*DATA*/', json.dumps(DATA, separators=(',',':'))).replace('<!--INFO-->', INFO).replace('{{WA_TEXT}}', urllib.parse.quote('Para ver cuándo pasa el próximo tren Urquiza: ' + BASE_URL)).replace('{{BASE_URL}}', BASE_URL)
+page = tpl.replace('/*DATA*/', json.dumps(DATA, separators=(',',':'))).replace('<!--INFO-->', INFO).replace('{{WA_TEXT}}', urllib.parse.quote('Para ver cuándo pasa el próximo tren Urquiza: ' + BASE_URL)).replace('{{FB_URL}}', urllib.parse.quote(BASE_URL, safe='')).replace('{{BASE_URL}}', BASE_URL)
 open(f'{OUT}/index.html', 'w', encoding='utf-8').write(page)
 import hashlib
 ver = hashlib.md5(page.encode('utf-8')).hexdigest()[:10]

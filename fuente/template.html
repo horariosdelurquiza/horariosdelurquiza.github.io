@@ -16,14 +16,25 @@
 <meta property="og:type" content="website">
 <meta property="og:image" content="{{BASE_URL}}og.png">
 <meta property="og:url" content="{{BASE_URL}}">
+<meta property="og:site_name" content="Tren Urquiza horarios">
+<meta property="og:locale" content="es_AR">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Tren Urquiza horarios: cuándo pasa el próximo tren y cuánto tarda">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tren Urquiza horarios">
+<meta name="twitter:description" content="Mirá cuándo pasa el próximo tren y cuánto tarda, de Lacroze a Lemos.">
+<meta name="twitter:image" content="{{BASE_URL}}og.png">
+<link rel="canonical" href="{{BASE_URL}}">
 <!--
   ANUNCIOS: cuando Google AdSense apruebe el sitio, completar ADS_CLIENT y ADS_SLOTS
   en el script (buscar "ANUNCIOS"). No hace falta tocar nada más.
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap">
+<!-- La tipografía carga aparte: si la señal es mala, la página aparece igual con una letra del sistema. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap"></noscript>
 <style>
 /*
   Tren Urquiza horarios — sistema
@@ -163,10 +174,11 @@ ol.trains li:first-child .trow{border-top:0}
 .diagram{position:relative;padding:4px 0}
 .drow{display:grid;grid-template-columns:56px 60px 1fr;align-items:center;height:var(--rowh)}
 .drow .t{text-align:right;color:var(--riel);font-size:15px}
-.drow .n{font-size:16px;color:var(--riel);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drow .n{font-size:16px;color:var(--riel);display:flex;align-items:center;min-width:0}
+.drow .n .nm{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .drow.on .t,.drow.on .n{color:var(--carbon)}
 .drow.end .n,.drow.end .t{font-weight:700}
-.drow .n .tag{border-color:var(--turquesa);color:var(--turquesa-texto)}
+.drow .n .tag{flex:none;border-color:var(--turquesa);color:var(--turquesa-texto)}
 .dot{justify-self:center;width:12px;height:12px;border-radius:50%;background:var(--papel);border:3px solid var(--junta);position:relative;z-index:2}
 .drow.on .dot{border-color:var(--turquesa)}
 .drow.end .dot{width:18px;height:18px;border-width:4px;background:var(--turquesa)}
@@ -283,6 +295,7 @@ td.tab,td.num{white-space:nowrap;font-feature-settings:"tnum" 1}
 dialog.sheet{border:0;padding:0;margin:auto auto 0;width:100%;max-width:520px;max-height:88vh;border-radius:20px 20px 0 0;background:var(--papel);color:var(--carbon);box-shadow:0 -12px 40px rgba(34,41,43,.28)}
 @media (min-width:640px){dialog.sheet{margin:auto;border-radius:20px;max-height:80vh}}
 dialog.sheet::backdrop{background:rgba(34,41,43,.5)}
+dialog.sheet:not([open]){display:none}
 .sheet-in{display:flex;flex-direction:column;max-height:inherit}
 .sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 16px 8px}
 .sheet-head h3{font-size:21px;font-weight:800;font-stretch:90%}
@@ -406,6 +419,7 @@ dialog.sheet::backdrop{background:rgba(34,41,43,.5)}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/></svg>
           Mandar por WhatsApp
         </a>
+        <a class="btn btn-alt" id="fbLink" href="https://www.facebook.com/sharer/sharer.php?u={{FB_URL}}" target="_blank" rel="noopener">Compartir en Facebook</a>
         <button class="btn btn-alt" id="shareMore" type="button">Otras formas de compartir</button>
       </div>
     </section>
@@ -820,7 +834,7 @@ var lastAlarmHtml = '', lastInfoHtml = '';
 function renderAlarm(ctx, hero, sel, o, d){
   var a = store.get('urq.alarm', null), html = '';
   if (a && Date.now() < a.ts + 2*60000){
-    html = '<span>Te aviso a las <b class="tab">' + hhmm(a.depMin - a.lead) + '</b>, ' + a.lead + ' min antes del ' + esc(a.label) + '. Dejá la página abierta.</span> <button type="button" class="linkbtn" data-alarm="off">Cancelar aviso</button>';
+    html = '<span>Te aviso a las <b class="tab">' + hhmm(a.depMin - a.lead) + '</b>, ' + a.lead + ' min antes del ' + esc(a.label) + '. Dejá la página abierta y la pantalla prendida.</span> <button type="button" class="linkbtn" data-alarm="off">Cancelar aviso</button>';
   } else if (alarmable(ctx, hero)){
     html = '<label for="leadSel">Avisarme</label> <select id="leadSel">' + [2,5,10,15].map(function(m){ return '<option value="' + m + '"' + (m === S.lead ? ' selected' : '') + '>' + m + '</option>'; }).join('') +
       '</select> <span>min antes</span> <button type="button" class="chipbtn" data-alarm="hero">Activar aviso</button>';
@@ -898,7 +912,7 @@ function renderTrip(ctx, sel, o, d){
     var st = stAt(r), on = r >= lo && r <= hi, end = st === o || st === d;
     var t = sel ? hhmm(sel.tr.t[st] + sel.off) : '';
     var tag = st === o ? '<span class="tag">subís</span>' : st === d ? '<span class="tag">bajás</span>' : '';
-    html += '<div class="drow' + (on ? ' on' : '') + (end ? ' end' : '') + '"><span class="t tab">' + t + '</span><span class="dot"></span><span class="n">' + esc(ST[st][0]) + tag + '</span></div>';
+    html += '<div class="drow' + (on ? ' on' : '') + (end ? ' end' : '') + '"><span class="t tab">' + t + '</span><span class="dot"></span><span class="n"><span class="nm">' + esc(ST[st][0]) + '</span>' + tag + '</span></div>';
   }
   var rh = 36;
   var probe = $('diagram').querySelector('.drow');
@@ -984,6 +998,13 @@ function setAvisos(open){
   var sc = document.createElement('script');
   sc.async = true; sc.charset = 'utf-8'; sc.src = 'https://platform.twitter.com/widgets.js';
   document.body.appendChild(sc);
+  /* X a veces no muestra los posts (sin sesión, sin señal, navegadores de Facebook): si no aparecen, un botón directo */
+  setTimeout(function(){
+    var f = $('avisosFeed').querySelector('iframe');
+    if (!f || f.getBoundingClientRect().height < 40){
+      $('avisosFeed').innerHTML = '<p class="small avisos-fuente">Por ahora no se pueden mostrar los avisos acá.</p><p style="margin:10px 0 0"><a class="btn btn-main" href="https://x.com/Metrovias" target="_blank" rel="noopener">Abrir los avisos en X</a></p>';
+    }
+  }, 9000);
 }
 $('avisosBtn').addEventListener('click', function(){ setAvisos($('avisosBox').hidden); });
 if (store.get('urq.avisos', 0) === 1) setAvisos(true);
@@ -993,6 +1014,8 @@ var installEvt = null;
 window.addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); installEvt = e; });
 window.addEventListener('appinstalled', function(){ installEvt = null; toast('Listo, ya tenés el ícono en el celular.'); });
 function isStandalone(){ try { return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch(e){ return false; } }
+/* los links de Facebook, Instagram y Messenger se abren en un navegador propio, que no deja crear el ícono */
+var enApp = /FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger/.test(navigator.userAgent || '');
 function crearIcono(){
   if (isStandalone()){ toast('Ya la estás usando desde el ícono.'); return; }
   if (installEvt){
@@ -1008,6 +1031,7 @@ function crearIcono(){
   var compu = { t: 'En la computadora', s: ['Abrí esta página en <b>Chrome</b>.', 'Tocá el ícono de <b>instalar</b> al final de la barra de direcciones.'] };
   /* se muestran los dos sistemas; primero el del celular que se está usando */
   var grupos = ios ? [iphone, andr] : android ? [andr, iphone] : [iphone, andr, compu];
+  if (enApp) grupos.unshift({ t: 'Primero abrila en tu navegador', s: ['Tocá los <b>tres puntos</b> del navegador de Facebook.', 'Elegí <b>Abrir en el navegador</b>. En iPhone dice <b>Abrir en Safari</b>.'] });
   $('installSteps').innerHTML = grupos.map(function(g){
     return '<h4 class="paso-t">' + g.t + '</h4><ol class="pasos">' + g.s.map(function(t){ return '<li>' + t + '</li>'; }).join('') + '</ol>';
   }).join('');
@@ -1024,6 +1048,11 @@ $('installSheet').addEventListener('click', function(e){ if (e.target === this){
   var ua = navigator.userAgent || '';
   var celular = /Android|iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && 'ontouchend' in document);
   if (celular && !isStandalone() && store.get('urq.icono', 0) !== 1) aviso.hidden = false;
+  if (enApp){
+    aviso.querySelector('h2').textContent = 'Abrila en tu navegador';
+    aviso.querySelector('.small').textContent = 'Desde Facebook no se puede crear el ícono. Abrila en tu navegador y listo.';
+    $('iconoBtn').textContent = 'Ver cómo';
+  }
   $('iconoBtn').addEventListener('click', crearIcono);
   $('iconoNo').addEventListener('click', function(){ store.set('urq.icono', 1); aviso.hidden = true; });
   window.addEventListener('appinstalled', function(){ aviso.hidden = true; });
@@ -1132,6 +1161,7 @@ $('list').addEventListener('click', function(e){
 function baseUrl(){ return location.href.split('#')[0].split('?')[0]; }
 var SHARE_TEXT = 'Para ver cuándo pasa el próximo tren Urquiza: ';
 try { if (/^https?:/.test(location.protocol)) $('waLink').href = 'https://wa.me/?text=' + encodeURIComponent(SHARE_TEXT + baseUrl()); } catch(e){}
+try { if (/^https?:/.test(location.protocol)) $('fbLink').href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(baseUrl()); } catch(e){}
 $('shareMore').addEventListener('click', function(){ shareIt({title:'Tren Urquiza horarios', text:SHARE_TEXT.replace(/: $/, ''), url:baseUrl()}); });
 $('shareBtn').addEventListener('click', function(){
   shareIt({title:'Tren Urquiza horarios', text:'Próximos trenes ' + ST[S.from][1] + ' a ' + ST[S.to][1], url:baseUrl() + routeHash()});

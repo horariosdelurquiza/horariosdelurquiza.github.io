@@ -25,6 +25,7 @@ Necesita Python 3 con Pillow. Si faltan las tipografías DejaVu, conserva el `og
   - `<!--INFO-->`: la sección de información para buscadores (primeros y últimos trenes, frecuencias, minutos por estación, preguntas frecuentes).
   - `{{BASE_URL}}`.
   - `{{WA_TEXT}}`.
+  - `{{FB_URL}}`: el link del sitio codificado, para el botón "Compartir en Facebook".
   - `<!--CONTACTO-->`.
 - `fuente/build.py`: arma todo. Variables opcionales:
   - `BASE_URL`: por defecto la del sitio.
@@ -110,7 +111,8 @@ El dueño pidió que la página **no parezca hecha con IA** y que use el color d
 - Aviso antes del tren (2, 5, 10 o 15 min): suena, vibra y manda una notificación.
 - Datos de combinaciones por estación y link al mapa.
 - Avisos de Metrovías: muestra los últimos posts de @Metrovias en X.
-- Compartir: botón del sistema y botón de WhatsApp.
+- Compartir: botón del sistema, WhatsApp y Facebook.
+- Si la abren desde el navegador de Facebook, Instagram o Messenger (no deja crear el ícono), el aviso del ícono cambia y explica cómo abrirla en el navegador.
 - Instalar como app (ícono en el celular). Si el navegador no puede instalarla directo, abre una ventana con los pasos para iPhone y para Android, y pone primero los del celular que se está usando. Además del botón del pie, hay un aviso chico debajo del tablero, solo en celulares, que se puede cerrar con "Ahora no".
 - Abajo, la información para buscadores (tablas y preguntas frecuentes) está en bloques que se abren y se cierran con un toque. En pantallas grandes empiezan abiertos.
 - Funciona sin conexión.
