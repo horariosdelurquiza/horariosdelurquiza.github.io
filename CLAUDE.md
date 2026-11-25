@@ -12,7 +12,7 @@ Sitio de una sola página para ver cuándo pasa el próximo tren de la línea Ur
 
 ## Cómo está armado
 
-Los archivos de la raíz (`index.html`, `privacidad.html`, `terminos.html`, `sw.js`, `manifest.webmanifest`, íconos, `og.png`, `robots.txt`, `sitemap.xml`, `README.md`) **se generan**. No los edites a mano. Se edita lo que está en `fuente/` y después se corre, desde la raíz:
+Los archivos de la raíz (`index.html`, `privacidad.html`, `terminos.html`, `anunciar.html`, `sw.js`, `manifest.webmanifest`, íconos, `og.png`, `robots.txt`, `sitemap.xml`, `README.md`) **se generan**. No los edites a mano. Se edita lo que está en `fuente/` y después se corre, desde la raíz:
 
 ```
 python3 fuente/build.py
@@ -30,7 +30,9 @@ Necesita Python 3 con Pillow. Si faltan las tipografías DejaVu, conserva el `og
 - `fuente/build.py`: arma todo. Variables opcionales:
   - `BASE_URL`: por defecto la del sitio.
   - `OUT`: por defecto la raíz del repo.
-  - `CONTACT_EMAIL`: si está, agrega al pie "Anunciá tu negocio" (link a `anunciar.html`) y "Dejanos tu sugerencia" (mailto).
+  - `CONTACT_EMAIL`: si está, agrega al pie "Dejanos tu sugerencia" (mailto). También se puede poner como `"email"` en `fuente/datos/contacto.json`.
+- `fuente/datos/contacto.json`: el contacto del dueño. Hoy tiene el WhatsApp (`whatsapp`, con 549 adelante, y `telefono_visible`). Si hay WhatsApp o mail, el armado agrega al pie "Anunciá tu negocio" y genera `anunciar.html`.
+- `fuente/anunciar.html`: página para comercios que quieran anunciar. Tiene las marcas `{{BOTON_CONTACTO}}` y `{{DATOS_CONTACTO}}`, que el armado reemplaza. Está en `CORE` y `pageKey` de `sw_template.js` (marca `/*ANUNCIAR*/`) y en `sitemap.xml`.
 - `fuente/privacidad.html` y `fuente/terminos.html`: se copian tal cual.
 - `fuente/sw_template.js`: el service worker. Su versión es un hash de la página, así que cada vez que cambia la página, los celulares se actualizan solos. Por eso hay que volver a armar después de cualquier cambio. Sirve la página de la red primero y, sin conexión, la del caché.
 - `fuente/README-sitio.md`: se copia como `README.md` de la raíz.
@@ -121,9 +123,10 @@ Claves que guarda en `localStorage`: `urq.recent`, `urq.last`, `urq.avisos`, `ur
 
 ## Pendientes
 
-Ya hechos y publicados: el pie nuevo (Términos, Privacidad, Crear ícono) con `terminos.html`, y el contador de visitas (`CF_ANALYTICS_TOKEN` cargado).
+Ya hechos y publicados: el pie nuevo (Términos, Privacidad, Crear ícono) con `terminos.html`, el contador de visitas (`CF_ANALYTICS_TOKEN` cargado) y la página "Anunciá tu negocio" con el WhatsApp del dueño.
 
-1. **Mail de contacto:** cuando el dueño lo pase, armá el sitio con `CONTACT_EMAIL=...` y creá `fuente/anunciar.html`. Tiene que ser una página simple, con el mismo estilo que `terminos.html`, para comercios que quieran anunciar. El armado tiene que copiarla igual que a `terminos.html`, y hay que sumarla a `CORE` y `pageKey` en `sw_template.js` y al `sitemap.xml`. Preguntale si también quiere poner un WhatsApp.
+1. **Mail de contacto:** si el dueño pasa un mail, agregalo como `"email"` en `fuente/datos/contacto.json`. Con eso aparece "Dejanos tu sugerencia" en el pie y el mail como opción en `anunciar.html`. Todavía no hay mail.
+   - Los anuncios para comercios locales todavía no tienen formato ni precio definidos en la página: `anunciar.html` dice que se arman caso por caso. Cuando el dueño decida cómo y dónde se muestran, hay que sumarlo.
 2. **AdSense:** cuando lo aprueben:
    - completá `ADS_CLIENT` y `ADS_SLOTS`;
    - creá `ads.txt` en la raíz con `google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0`, cambiando las X por su número de editor;

@@ -1,8 +1,10 @@
 """Arma el sitio de Tren Urquiza horarios.
 
 Uso (desde la raíz del repo):  python fuente/build.py
-Escribe index.html, privacidad.html, terminos.html, sw.js, íconos, og.png, manifest y README.md en la raíz.
-Variables opcionales: BASE_URL, OUT, CONTACT_EMAIL (activa «Anunciá tu negocio» y «Dejanos tu sugerencia»).
+Escribe index.html, privacidad.html, terminos.html, anunciar.html, sw.js, íconos, og.png, manifest y README.md en la raíz.
+El contacto sale de fuente/datos/contacto.json (whatsapp, telefono_visible y, si hay, email): activa «Anunciá tu negocio» y la página anunciar.html.
+Con un email (en el json o con la variable CONTACT_EMAIL) se suma «Dejanos tu sugerencia».
+Variables opcionales: BASE_URL, OUT, CONTACT_EMAIL.
 """
 import json, os, statistics, html, shutil
 from PIL import Image, ImageDraw, ImageFont
@@ -139,22 +141,45 @@ os.makedirs(OUT, exist_ok=True)
 tpl = open(f'{SRC}/template.html', encoding='utf-8').read()
 assert '/*DATA*/' in tpl and '<!--INFO-->' in tpl and '{{BASE_URL}}' in tpl
 import urllib.parse
-CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', '')
-contacto = ''
+# --- contacto: el número y el mail (opcional) salen de fuente/datos/contacto.json; CONTACT_EMAIL de la variable los pisa
+try:
+    CONTACTO = json.load(open(os.path.join(SRC, 'datos', 'contacto.json'), encoding='utf-8'))
+except FileNotFoundError:
+    CONTACTO = {}
+WA_NUM = ''.join(c for c in CONTACTO.get('whatsapp', '') if c.isdigit())
+TEL_VISIBLE = CONTACTO.get('telefono_visible', '')
+CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', CONTACTO.get('email', ''))
+HAY_ANUNCIAR = bool(WA_NUM or CONTACT_EMAIL)
+ICONO_WA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/></svg>'
+items_contacto = []
+if HAY_ANUNCIAR:
+    items_contacto.append('<li><a href="anunciar.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4h3l6 4V6L6 10H3z"/><path d="M16 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/></svg>Anunciá tu negocio</a></li>')
 if CONTACT_EMAIL:
-    contacto = ('<li><a href="anunciar.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4h3l6 4V6L6 10H3z"/><path d="M16 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/></svg>Anunciá tu negocio</a></li>\n'
-                '      <li><a href="mailto:' + CONTACT_EMAIL + '?subject=Sugerencia%20para%20Tren%20Urquiza%20horarios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg>Dejanos tu sugerencia</a></li>')
+    items_contacto.append('<li><a href="mailto:' + CONTACT_EMAIL + '?subject=Sugerencia%20para%20Tren%20Urquiza%20horarios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg>Dejanos tu sugerencia</a></li>')
+contacto = '\n      '.join(items_contacto)
 tpl = tpl.replace('<!--CONTACTO-->', contacto)
 page = tpl.replace('/*DATA*/', json.dumps(DATA, separators=(',',':'))).replace('<!--INFO-->', INFO).replace('{{WA_TEXT}}', urllib.parse.quote('Para ver cuándo pasa el próximo tren Urquiza: ' + BASE_URL)).replace('{{FB_URL}}', urllib.parse.quote(BASE_URL, safe='')).replace('{{BASE_URL}}', BASE_URL)
 open(f'{OUT}/index.html', 'w', encoding='utf-8').write(page)
 import hashlib
 ver = hashlib.md5(page.encode('utf-8')).hexdigest()[:10]
-open(f'{OUT}/sw.js', 'w', encoding='utf-8').write(open(f'{SRC}/sw_template.js', encoding='utf-8').read().replace('{{VERSION}}', ver))
+open(f'{OUT}/sw.js', 'w', encoding='utf-8').write(open(f'{SRC}/sw_template.js', encoding='utf-8').read().replace('{{VERSION}}', ver).replace('/*ANUNCIAR*/', "'./anunciar.html', " if HAY_ANUNCIAR else ''))
 
 # --- política de privacidad
 priv = open(f'{SRC}/privacidad.html', encoding='utf-8').read()
 open(f'{OUT}/privacidad.html', 'w', encoding='utf-8').write(priv)
 open(f'{OUT}/terminos.html', 'w', encoding='utf-8').write(open(f'{SRC}/terminos.html', encoding='utf-8').read())
+
+# --- página para anunciantes (solo si hay un medio de contacto)
+if HAY_ANUNCIAR:
+    if WA_NUM:
+        wa_link = f'https://wa.me/{WA_NUM}?text=' + urllib.parse.quote('Hola, vi la página Tren Urquiza horarios y quiero anunciar mi negocio.')
+        boton = f'<a class="btn" href="{wa_link}" target="_blank" rel="noopener">{ICONO_WA}Escribir por WhatsApp</a>'
+        datos = f'<p class="upd">WhatsApp: {E(TEL_VISIBLE)}</p>' if TEL_VISIBLE else ''
+    else:
+        boton = f'<a class="btn" href="mailto:{CONTACT_EMAIL}?subject=Quiero%20anunciar%20mi%20negocio">Escribir por mail</a>'
+        datos = f'<p class="upd">Mail: {E(CONTACT_EMAIL)}</p>'
+    anu = open(f'{SRC}/anunciar.html', encoding='utf-8').read().replace('{{BOTON_CONTACTO}}', boton).replace('{{DATOS_CONTACTO}}', datos)
+    open(f'{OUT}/anunciar.html', 'w', encoding='utf-8').write(anu)
 
 # --- manifest
 manifest = {
@@ -214,7 +239,7 @@ open(f'{OUT}/robots.txt', 'w', encoding='utf-8').write(
     f'User-agent: *\nDisallow: /fuente/\nDisallow: /CLAUDE.md\n\nSitemap: {BASE_URL}sitemap.xml\n')
 open(f'{OUT}/sitemap.xml', 'w', encoding='utf-8').write(
     '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-    + ''.join(f'  <url><loc>{BASE_URL}{p}</loc></url>\n' for p in ('', 'privacidad.html', 'terminos.html'))
+    + ''.join(f'  <url><loc>{BASE_URL}{p}</loc></url>\n' for p in ('', 'privacidad.html', 'terminos.html') + (('anunciar.html',) if HAY_ANUNCIAR else ()))
     + '</urlset>\n')
 print('ok', len(page))
 for name,row in freq: print('  ',name,'|',' | '.join(row))

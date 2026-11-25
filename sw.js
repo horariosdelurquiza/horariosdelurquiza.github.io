@@ -1,6 +1,6 @@
 /* Tren Urquiza horarios: guarda la página para usarla sin señal. */
-var CACHE = 'urquiza-b668359aca';
-var CORE = ['./', './index.html', './privacidad.html', './terminos.html', './manifest.webmanifest', './favicon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
+var CACHE = 'urquiza-90125b36b4';
+var CORE = ['./', './index.html', './privacidad.html', './terminos.html', './anunciar.html', './manifest.webmanifest', './favicon.svg', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', function(e){
   e.waitUntil(caches.open(CACHE).then(function(c){ return c.addAll(CORE); }).then(function(){ return self.skipWaiting(); }));
@@ -15,6 +15,7 @@ self.addEventListener('activate', function(e){
 function pageKey(url){
   if (url.pathname.endsWith('privacidad.html')) return './privacidad.html';
   if (url.pathname.endsWith('terminos.html')) return './terminos.html';
+  if (url.pathname.endsWith('anunciar.html')) return './anunciar.html';
   return './index.html';
 }
 
