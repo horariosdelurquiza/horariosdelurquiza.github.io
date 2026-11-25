@@ -36,7 +36,7 @@ Necesita Python 3 con Pillow. Si faltan las tipografías DejaVu, conserva el `og
 - `fuente/README-sitio.md`: se copia como `README.md` de la raíz.
 - Configuración dentro de `template.html`, cerca del principio del `<script>`:
   - `ADS_CLIENT`, `ADS_SLOTS`: AdSense. Hoy vacíos. Con `?anuncios` en la URL se ven los lugares de los anuncios.
-  - `CF_ANALYTICS_TOKEN`: Cloudflare Web Analytics. Vacío por ahora.
+  - `CF_ANALYTICS_TOKEN`: Cloudflare Web Analytics. Cargado, el contador de visitas está activo. El token es público (queda visible en la página), no es una clave. Los números se ven en el panel de Cloudflare, en Web Analytics.
 
 Para probar en la compu: `python3 -m http.server` en la raíz y abrir http://localhost:8000. Revisá siempre en un ancho de celular (375 a 390 px) que no haya desplazamiento horizontal.
 
@@ -121,17 +121,16 @@ Claves que guarda en `localStorage`: `urq.recent`, `urq.last`, `urq.avisos`, `ur
 
 ## Pendientes
 
-1. **Publicar el pie nuevo** (Términos y condiciones, Política de privacidad, Anunciá tu negocio, Dejanos tu sugerencia, Crear ícono en el celular) y la página `terminos.html`. Ya está todo en `fuente/`, falta armar y subir: corré `python3 fuente/build.py`, revisá y hacé commit.
-2. **Mail de contacto:** cuando el dueño lo pase, armá el sitio con `CONTACT_EMAIL=...` y creá `fuente/anunciar.html`. Tiene que ser una página simple, con el mismo estilo que `terminos.html`, para comercios que quieran anunciar. El armado tiene que copiarla igual que a `terminos.html`, y hay que sumarla a `CORE` y `pageKey` en `sw_template.js` y al `sitemap.xml`. Preguntale si también quiere poner un WhatsApp.
-3. **Contador de visitas:** cuando pase el token de Cloudflare Web Analytics, completá `CF_ANALYTICS_TOKEN`.
-4. **AdSense:** cuando lo aprueben:
+Ya hechos y publicados: el pie nuevo (Términos, Privacidad, Crear ícono) con `terminos.html`, y el contador de visitas (`CF_ANALYTICS_TOKEN` cargado).
+
+1. **Mail de contacto:** cuando el dueño lo pase, armá el sitio con `CONTACT_EMAIL=...` y creá `fuente/anunciar.html`. Tiene que ser una página simple, con el mismo estilo que `terminos.html`, para comercios que quieran anunciar. El armado tiene que copiarla igual que a `terminos.html`, y hay que sumarla a `CORE` y `pageKey` en `sw_template.js` y al `sitemap.xml`. Preguntale si también quiere poner un WhatsApp.
+2. **AdSense:** cuando lo aprueben:
    - completá `ADS_CLIENT` y `ADS_SLOTS`;
    - creá `ads.txt` en la raíz con `google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0`, cambiando las X por su número de editor;
    - agregá `ads.txt` al armado para que no se pierda.
-5. **Horario de verano:** cargarlo cuando salga el PDF (ver arriba).
-6. **Ideas para más adelante:**
-   - una página por estación para aparecer en Google ("horarios tren Urquiza Martín Coronado");
-   - los feriados puente.
+3. **Horario de verano:** cargarlo cuando salga el PDF (ver arriba). El año pasado rigió desde el 15/12.
+4. **Feriados puente:** el lunes 7/12/2026 es día no laborable con fines turísticos (Resolución 164/2025; los otros de 2026 fueron el 23/3 y el 10/7). La página lo trata como día hábil. Falta confirmar qué horario usa Metrovías ese día.
+5. **Ideas para más adelante:** una página por estación para aparecer en Google ("horarios tren Urquiza Martín Coronado").
 
 ## Commits
 
