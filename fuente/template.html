@@ -312,7 +312,7 @@ dialog.sheet:not([open]){display:none}
 .stations .mini{margin-left:auto;font-size:13px;font-weight:600;color:var(--turquesa-texto)}
 .stations.filtering li::after{display:none}
 
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--carbon);color:#fff;padding:10px 16px;border-radius:999px;font-size:15px;z-index:50;max-width:90vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--carbon);color:#fff;padding:10px 16px;border-radius:18px;font-size:15px;line-height:1.35;text-align:center;z-index:50;width:max-content;max-width:90vw;max-width:min(90vw,420px);white-space:normal}
 
 @media (prefers-reduced-motion: reduce){.flip{animation:none}.mk{transition:none}}
 </style>
@@ -873,7 +873,7 @@ function setAlarm(x){
   var ts = Date.now() + (x.dep - ctx.now.min) * 60000;
   store.set('urq.alarm', {ts:ts, depMin:x.dep, lead:S.lead, label:tripLabel(x, S.from, S.to), fired:false});
   try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); } catch(e){}
-  toast('Listo: te aviso ' + S.lead + ' min antes. Dejá la página abierta.');
+  toast('Listo: te aviso ' + S.lead + ' min antes. Dejá la página abierta y la pantalla prendida.');
   render();
 }
 function clearAlarm(){ store.set('urq.alarm', null); $('alarmPop').hidden = true; render(); }
